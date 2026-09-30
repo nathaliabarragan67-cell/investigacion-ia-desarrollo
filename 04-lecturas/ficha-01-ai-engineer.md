@@ -1,6 +1,7 @@
 # Ficha 01: The Rise of the AI Engineer
 
 **Referencia:** Swyx. (30 de junio de 2023). *The Rise of the AI Engineer*. Latent Space. (https://www.latent.space/p/ai-engineer)
+
 **Fecha de lectura:** 17 de septiembre de 2026
 
 ## Resumen (en mis palabras)

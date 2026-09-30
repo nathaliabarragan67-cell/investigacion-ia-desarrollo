@@ -6,8 +6,6 @@ Registro de lo que investigo, pruebo y aprendo.
 
 Desde el 17 de septiembre empecé a explorar el tema antes de crear este portafolio:
 
-Desde el 17 de septiembre empecé a explorar el tema antes de crear este portafolio:
-
 - **Semana 1 (Exploración de Ecosistema):**
   - Leí el artículo ["The Rise of AI Engineer"](https://www.latent.space/p/ai-engineer) de Swyx, para entender la diferencia entre un científico de datos tradicional y un desarrollador de software que construye software usando APIs de IA.
   - Revisé el reporte de [State of AI Report](https://stateof.ai), enfocándome en los avances de los modelos abiertos (Open Source) como Llama 3 de Meta frente a los modelos cerrados.

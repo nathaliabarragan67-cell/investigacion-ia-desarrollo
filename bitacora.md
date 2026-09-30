@@ -13,7 +13,7 @@ Desde el 17 de septiembre empecé a explorar el tema antes de crear este portafo
 
 - **Semana 2 (Herramientas y Arquitectura):**
   - Leí la guía oficial de [Prompt Engineering de OpenAI](https://developers.openai.com/api/docs/guides/prompt-engineering?api-mode=responses), aprendiendo tácticas como el uso de delimitadores y la técnica de "Cadena de Pensamiento" (Chain of Thought).
-  - Analicé el anuncio y la especificación técnica de [Model Context Protocol (MCP)](https://modelcontextprotocol.org) de Anthropic para ver cómo se conectarán los editores de código (como Cursor) con herramientas locales en el futuro cercano.
+  - Leí la introducción oficial del Model Context Protocol (MCP), sobre cómo conecta aplicaciones de IA con datos, herramientas y flujos de trabajo.
   - Vi las demostraciones de uso de **Claude Code** en terminal, lo que me inspiró a crear la carpeta `03-herramientas` en este repositorio para empezar a documentar mis propias pruebas de velocidad y precisión.
 
 

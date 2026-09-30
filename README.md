@@ -38,5 +38,5 @@ Soy **Nathalia Barragán Torres**, estudiante de Ingeniería de Software (tercer
 
 ## Contacto
 
-- Semillero: Wilson Eduardo Soto Forero
+- Docente Lider del Semillero: Wilson Eduardo Soto Forero
 - GitHub: [@nathaliabarragan67-celda](https://github.com/nathaliabarragan67-celda)

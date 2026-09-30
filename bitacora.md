@@ -25,3 +25,4 @@ Desde el 17 de septiembre empecé a explorar el tema antes de crear este portafo
 - Redacté la ficha 01 (The Rise of the AI Engineer) en 04-lecturas.
 - Redacté la ficha 02 (*Prompt engineering*, OpenAI API).
 - Redacté la ficha 03 (*What is the Model Context Protocol (MCP)?*).
+- Redacte la ficha 04: Security Best Practices (MCP

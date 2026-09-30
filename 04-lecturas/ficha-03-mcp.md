@@ -22,7 +22,7 @@ Esta página es la introducción oficial al Model Context Protocol (MCP), un est
 - No dice quién creó MCP. Según su anuncio original (https://www.anthropic.com/news/model-context-protocol), lo presentó Anthropic en noviembre de 2024. Es la misma empresa que desarrolla Claude y Claude Code, que aparecen como ejemplos en la página, lo que refuerza el tono promocional. Este dato lo encontré citado en fuentes secundarias y falta contrastarlo leyendo el anuncio original.
 
 - **Fuente complementaria:** Anthropic. (25 de noviembre de 2024). *Introducing the Model Context Protocol*. https://www.anthropic.com/news/model-context-protocol
-- 
+  
 - No responde cómo comunicar un diseño a una IA. MCP resuelve la conexión con herramientas y datos, no cómo redactar requisitos, dividir un sistema en partes ni verificar lo que la IA construyó. Eso queda fuera de su alcance.
 - Los ejemplos (Blender con impresora 3D, chatbots empresariales conectados a varias bases de datos) se presentan sin detalles, y no deja claro qué tan confiables son en la práctica.
 - La seguridad solo se menciona como un enlace. Dar a una IA acceso a calendarios, archivos o bases de datos implica riesgos de privacidad y de acciones no deseadas que la página no desarrolla.

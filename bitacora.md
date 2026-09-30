@@ -22,3 +22,4 @@ Desde el 17 de septiembre empecé a explorar el tema antes de crear este portafo
 - Creé el repositorio y la estructura del portafolio.
 - Redacté el README con mi pregunta de investigación y mis líneas de trabajo.
 - Organicé las cinco carpetas del repositorio con su README.
+- Redacté la ficha 01 (The Rise of the AI Engineer) en 04-lecturas.

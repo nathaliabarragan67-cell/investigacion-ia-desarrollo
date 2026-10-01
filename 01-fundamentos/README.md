@@ -9,7 +9,7 @@ Conceptos base sobre LLM, agentes y copilotos de IA, tal como los entiendo hasta
 - **Agente:** el modelo decide por sí mismo sus pasos y qué herramientas usar. (Ficha 05)
 - **Cómo conectar un modelo con sistemas externos:** el protocolo MCP. (Ficha 03)
 
-Mi contestador automático se parece más a un flujo de trabajo que a un agente: ver [el experimento](05-experimentos/contestador-n8n / README.md.)
+Mi contestador automático se parece más a un flujo de trabajo que a un agente: ver [el experimento](05-experimentos/contestador-n8n / README.md)
 
 ## Lo que me falta
 

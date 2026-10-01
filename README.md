@@ -25,7 +25,7 @@ Soy **Nathalia Barragán Torres**, estudiante de Ingeniería de Software (tercer
 ├── 03-herramientas/        Pruebas y análisis de herramientas
 ├── 04-lecturas/            Fichas de artículos y papers (con fuentes)
 ├── 05-experimentos/        Mini proyectos propios usando IA
-└── bitacora.md             Registro semanal de avances
+└── bitacora.md             Registro de avances
 ```
 
 ## Metodología

@@ -17,6 +17,14 @@ Soy **Nathalia Barragán Torres**, estudiante de Ingeniería de Software (tercer
 3. **Herramientas:** pruebas y comparaciones de herramientas como Claude Code y otros asistentes de programación.
 4. **Riesgos y calidad:** errores, seguridad y forma de revisar el código generado por IA.
 
+## Lo que he encontrado hasta ahora
+
+Mi conclusión provisional, a partir de cuatro lecturas y un proyecto propio: comunicarle un diseño a una IA tiene cuatro partes: instrucciones bien estructuradas, acceso a las fuentes y herramientas correctas, restricciones de seguridad escritas como requisitos verificables y una forma de comprobar el resultado fuera del modelo.
+
+- [Fichas de lectura](04-lecturas/README.md)
+- [Experimento: contestador automático con IA](05-experimentos/contestador-n8n/README.md)
+- [Bitácora](bitacora.md)
+
 ## Estructura del repositorio
 
 ```

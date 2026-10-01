@@ -26,3 +26,9 @@ Desde el 17 de septiembre empecé a explorar el tema antes de crear este portafo
 - Redacté la ficha 02 (*Prompt engineering*, OpenAI API).
 - Redacté la ficha 03 (*What is the Model Context Protocol (MCP)?*).
 - Redacte la ficha 04: Security Best Practices (MCP
+
+## Miércoles 30 de septiembre de 2026
+
+- Contrasté las fichas con las fuentes originales y corregí lo que no coincidía.
+- Documenté como experimento, en 05-experimentos, el contestador automático con IA que construí con n8n, conectándolo con las cuatro fichas.
+- Informé al dueño del negocio antes de publicar la documentación, y la dejé anonimizada.

@@ -43,7 +43,3 @@ Botones Entregado, Reabrir y Eliminar; resumen del día (pedidos, pendientes y t
 - **Lista del día:** según el código, solo muestra los pedidos de la fecha actual.
 - **Falla por omisión:** los criterios 2 y 3 fallan sobre todo porque la descripción nunca mencionó esas reglas.
 
-## Capturas
-
-![Pedido #1 y formulario](captura-1.png)
-![Lista de pedidos de hoy](captura-2.png)

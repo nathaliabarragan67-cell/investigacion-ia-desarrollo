@@ -124,13 +124,13 @@ Marca ✔ cumple, ✘ falla o ~ parcial. Se llena después de ejecutar.
 
 | # | Criterio | A: libre | B: libre con reglas | C: especificación | Observaciones |
 |---|---|---|---|---|---|
-| 1 | Total correcto | ✔ | | | Total $104.000. No hay campo de color; aplica la regla definida antes de ejecutar |
-| 2 | Regla del color | ✘ | | | No existe el campo de color |
-| 3 | Datos de entrega | ✘ | | | Guardó los teléfonos "12345" y con letras y el pedido sin nombre; rechazó el domicilio sin dirección |
-| 4 | Entradas imposibles | ✔ | | | El menú no ofrece esas combinaciones; la línea desaparece al llegar a 0 |
-| 5 | Registro persistente | ✘ | | | Los pedidos no siguen al cerrar y reabrir el archivo |
-| 6 | Sin duplicados | ✔ | | | Un solo pedido; el segundo clic encuentra el formulario vacío |
-| | **Total** | 3/6 | | | |
+| 1 | Total correcto | ✔ | ✔ | | Total $104.000 |
+| 2 | Regla del color | ✘ | ✔ | | Rechaza arroz chino sin color; el selector solo ofrece Amarillo y Café |
+| 3 | Datos de entrega | ✘ | ✔ | | Rechaza teléfono inválido, domicilio sin barrio y recoger sin nombre |
+| 4 | Entradas imposibles | ✔ | ✔ | | Sin "Caja" para el pollo; rechaza cantidad 0 o negativa |
+| 5 | Registro persistente | [ver sección 4] | ✔ | | Siguen en el mismo navegador; no aparecen en incógnito |
+| 6 | Sin duplicados | ✔ | ✔ | | El botón se bloquea mientras guarda |
+| | **Total** | [según la repetición] | 6/6 | | |
 
 | Dato de proceso | A | B | C |
 |---|---|---|---|

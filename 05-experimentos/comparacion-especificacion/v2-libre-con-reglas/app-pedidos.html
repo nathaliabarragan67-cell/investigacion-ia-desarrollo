@@ -1,0 +1,350 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedidos del restaurante</title>
+<style>
+  :root { --bg:#f6f4ef; --card:#fff; --ink:#222; --mut:#6b6b6b; --line:#ddd8cc; --acc:#b3261e; --ok:#1b6e3c; }
+  * { box-sizing: border-box; }
+  body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--ink); }
+  header { background:var(--acc); color:#fff; padding:14px 20px; font-size:1.2rem; font-weight:600; }
+  main { max-width:1100px; margin:0 auto; padding:16px; display:grid; gap:16px; grid-template-columns: 1fr 1fr; }
+  @media (max-width: 800px) { main { grid-template-columns: 1fr; } }
+  section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; }
+  h2 { margin:0 0 12px; font-size:1.05rem; }
+  label { display:block; font-size:.85rem; color:var(--mut); margin:10px 0 4px; }
+  input, select, button { font:inherit; padding:9px 10px; border:1px solid var(--line); border-radius:8px; width:100%; background:#fff; }
+  button { cursor:pointer; background:var(--acc); color:#fff; border:none; font-weight:600; }
+  button.sec { background:#eee; color:var(--ink); border:1px solid var(--line); }
+  button:disabled { opacity:.55; cursor:not-allowed; }
+  .row { display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+  .hidden { display:none; }
+  .msg { padding:10px 12px; border-radius:8px; margin:12px 0 0; font-size:.92rem; }
+  .msg.err { background:#fdecea; color:#8a1c14; border:1px solid #f3b8b3; }
+  .msg.ok { background:#e8f5ec; color:var(--ok); border:1px solid #b5dcc1; }
+  table { width:100%; border-collapse:collapse; font-size:.92rem; }
+  th, td { text-align:left; padding:7px 6px; border-bottom:1px solid var(--line); vertical-align:top; }
+  td.num, th.num { text-align:right; white-space:nowrap; }
+  .total { font-size:1.4rem; font-weight:700; text-align:right; margin-top:10px; }
+  .empty { color:var(--mut); font-size:.9rem; padding:8px 0; }
+  .x { width:auto; background:none; color:var(--acc); padding:2px 8px; border:1px solid var(--line); }
+  .full { grid-column: 1 / -1; }
+  .order { border-bottom:1px solid var(--line); padding:10px 0; }
+  .order:last-child { border-bottom:none; }
+  .order .top { display:flex; justify-content:space-between; gap:8px; font-weight:600; }
+  .order .det { color:var(--mut); font-size:.88rem; margin-top:3px; }
+  .radios { display:flex; gap:10px; }
+  .radios label { flex:1; margin:0; color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:9px 10px; display:flex; gap:8px; align-items:center; cursor:pointer; font-size:.95rem; }
+  .radios input { width:auto; }
+</style>
+</head>
+<body>
+<header>Pedidos del restaurante</header>
+<main>
+
+  <section>
+    <h2>1. Agregar productos</h2>
+    <label for="producto">Producto</label>
+    <select id="producto"></select>
+
+    <div class="row">
+      <div>
+        <label for="presentacion">Presentación</label>
+        <select id="presentacion"></select>
+      </div>
+      <div>
+        <label for="cantidad">Cantidad</label>
+        <input id="cantidad" type="text" inputmode="numeric" value="1" autocomplete="off">
+      </div>
+    </div>
+
+    <div id="colorBox" class="hidden">
+      <label for="color">Color del arroz chino</label>
+      <select id="color">
+        <option value="">— Elige el color —</option>
+        <option value="Amarillo">Amarillo</option>
+        <option value="Café">Café</option>
+      </select>
+    </div>
+
+    <div style="margin-top:12px"><button id="btnAgregar" type="button" class="sec">Agregar al pedido</button></div>
+    <div id="msgLinea" class="msg err hidden" role="alert"></div>
+
+    <h2 style="margin-top:22px">Pedido actual</h2>
+    <div id="carrito"></div>
+    <div class="total">Total: <span id="total">$0</span></div>
+  </section>
+
+  <section>
+    <h2>2. Datos de entrega</h2>
+    <div class="radios">
+      <label><input type="radio" name="tipo" value="domicilio" checked> Domicilio</label>
+      <label><input type="radio" name="tipo" value="recoger"> Para recoger</label>
+    </div>
+
+    <div id="boxDomicilio">
+      <label for="barrio">Barrio</label>
+      <input id="barrio" type="text" autocomplete="off">
+      <label for="telefono">Teléfono (10 dígitos)</label>
+      <input id="telefono" type="text" inputmode="numeric" maxlength="15" autocomplete="off">
+    </div>
+    <div id="boxRecoger" class="hidden">
+      <label for="nombre">Nombre de quien recoge</label>
+      <input id="nombre" type="text" autocomplete="off">
+    </div>
+
+    <div style="margin-top:16px"><button id="btnGuardar" type="button">Guardar pedido</button></div>
+    <div id="msgGuardar" class="msg hidden" role="alert"></div>
+  </section>
+
+  <section class="full">
+    <h2>Pedidos guardados <span id="contador" style="color:var(--mut);font-weight:400"></span></h2>
+    <div id="lista"></div>
+  </section>
+
+</main>
+
+<script>
+(function () {
+  "use strict";
+
+  // ---------- Catálogo (única fuente de precios) ----------
+  var CATALOGO = {
+    "Arroz chino": { color: true,  pres: { "Caja": 50000, "Media": 42000, "Personal": 32000 } },
+    "Arroz paisa": { color: false, pres: { "Caja": 50000, "Media": 42000, "Personal": 32000 } },
+    "Pollo frito": { color: false, pres: { "Completo": 38000, "Medio": 22000, "Cuarto": 12000 } },
+    "Bebida":      { color: false, pres: { "Personal": 4000 } }
+  };
+  var COLORES = ["Amarillo", "Café"];
+  var KEY_PEDIDOS = "restaurante_pedidos_v1";
+
+  var fmt = new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+  function money(n) { return fmt.format(n).replace(/\s/g, ""); }
+
+  // ---------- Estado ----------
+  var carrito = [];
+  var pedidos = cargar();
+  var bloqueado = false;
+
+  function $(id) { return document.getElementById(id); }
+
+  // ---------- Almacenamiento ----------
+  function cargar() {
+    try {
+      var raw = localStorage.getItem(KEY_PEDIDOS);
+      var arr = raw ? JSON.parse(raw) : [];
+      return Array.isArray(arr) ? arr : [];
+    } catch (e) { return []; }
+  }
+  function guardarTodo() {
+    try { localStorage.setItem(KEY_PEDIDOS, JSON.stringify(pedidos)); return true; }
+    catch (e) { return false; }
+  }
+  function siguienteNumero() {
+    var max = 0;
+    pedidos.forEach(function (p) { if (p.numero > max) max = p.numero; });
+    return max + 1;
+  }
+
+  // ---------- Validación (siempre contra el catálogo) ----------
+  function validarLinea(l) {
+    var prod = CATALOGO[l.producto];
+    if (!prod) return "Elige un producto válido.";
+    if (!Object.prototype.hasOwnProperty.call(prod.pres, l.pres))
+      return "«" + l.producto + "» no se vende en presentación «" + l.pres + "». Presentaciones: " + Object.keys(prod.pres).join(", ") + ".";
+    if (!/^[1-9][0-9]*$/.test(String(l.cantidad))) return "La cantidad debe ser un número entero mayor que cero.";
+    if (prod.color) {
+      if (COLORES.indexOf(l.color) === -1) return "El arroz chino debe llevar color: amarillo o café.";
+    } else if (l.color) {
+      return "Solo el arroz chino lleva color.";
+    }
+    return null;
+  }
+  function precioLinea(l) { return CATALOGO[l.producto].pres[l.pres] * Number(l.cantidad); }
+  function totalCarrito() { return carrito.reduce(function (s, l) { return s + precioLinea(l); }, 0); }
+
+  // ---------- UI: formulario de línea ----------
+  function llenarProductos() {
+    var sel = $("producto");
+    Object.keys(CATALOGO).forEach(function (n) {
+      var o = document.createElement("option"); o.value = n; o.textContent = n; sel.appendChild(o);
+    });
+    actualizarPresentaciones();
+  }
+  function actualizarPresentaciones() {
+    var prod = CATALOGO[$("producto").value];
+    var sel = $("presentacion");
+    sel.innerHTML = "";
+    Object.keys(prod.pres).forEach(function (p) {
+      var o = document.createElement("option");
+      o.value = p; o.textContent = p + " — " + money(prod.pres[p]);
+      sel.appendChild(o);
+    });
+    $("colorBox").classList.toggle("hidden", !prod.color);
+    $("color").value = "";
+  }
+  function mostrar(el, texto, tipo) {
+    el.textContent = texto;
+    el.className = "msg " + tipo;
+  }
+  function ocultar(el) { el.className = "msg hidden"; el.textContent = ""; }
+
+  function agregarLinea() {
+    var prod = CATALOGO[$("producto").value];
+    var l = {
+      producto: $("producto").value,
+      pres: $("presentacion").value,
+      cantidad: $("cantidad").value.trim(),
+      color: prod.color ? $("color").value : ""
+    };
+    var err = validarLinea(l);
+    if (err) { mostrar($("msgLinea"), err, "err"); return; }
+    ocultar($("msgLinea"));
+    l.cantidad = Number(l.cantidad);
+    // Si ya existe la misma línea, se suman cantidades
+    var igual = carrito.find(function (x) { return x.producto === l.producto && x.pres === l.pres && x.color === l.color; });
+    if (igual) igual.cantidad += l.cantidad; else carrito.push(l);
+    $("cantidad").value = "1";
+    $("color").value = "";
+    pintarCarrito();
+  }
+
+  function descLinea(l) {
+    return l.cantidad + " × " + l.producto + " (" + l.pres + ")" + (l.color ? " — " + l.color : "");
+  }
+
+  function pintarCarrito() {
+    var cont = $("carrito");
+    cont.innerHTML = "";
+    if (!carrito.length) {
+      var e = document.createElement("div"); e.className = "empty"; e.textContent = "Aún no hay productos.";
+      cont.appendChild(e);
+    } else {
+      var t = document.createElement("table");
+      carrito.forEach(function (l, i) {
+        var tr = document.createElement("tr");
+        var a = document.createElement("td"); a.textContent = descLinea(l);
+        var b = document.createElement("td"); b.className = "num"; b.textContent = money(precioLinea(l));
+        var c = document.createElement("td"); c.className = "num";
+        var x = document.createElement("button"); x.type = "button"; x.className = "x"; x.textContent = "Quitar";
+        x.addEventListener("click", function () { carrito.splice(i, 1); pintarCarrito(); });
+        c.appendChild(x);
+        tr.appendChild(a); tr.appendChild(b); tr.appendChild(c);
+        t.appendChild(tr);
+      });
+      cont.appendChild(t);
+    }
+    $("total").textContent = money(totalCarrito());
+  }
+
+  // ---------- Tipo de pedido ----------
+  function tipoActual() { return document.querySelector('input[name="tipo"]:checked').value; }
+  function actualizarTipo() {
+    var dom = tipoActual() === "domicilio";
+    $("boxDomicilio").classList.toggle("hidden", !dom);
+    $("boxRecoger").classList.toggle("hidden", dom);
+  }
+
+  // ---------- Guardar pedido ----------
+  function guardarPedido() {
+    if (bloqueado) return;           // protege contra doble clic
+    bloqueado = true;
+    $("btnGuardar").disabled = true;
+    setTimeout(function () { bloqueado = false; $("btnGuardar").disabled = false; }, 1200);
+
+    var errores = [];
+    if (!carrito.length) errores.push("Agrega al menos un producto al pedido.");
+    carrito.forEach(function (l) { var e = validarLinea(l); if (e) errores.push(e); });
+
+    var tipo = tipoActual();
+    var datos = {};
+    if (tipo === "domicilio") {
+      var barrio = $("barrio").value.trim();
+      var tel = $("telefono").value.trim();
+      if (!barrio) errores.push("Falta el barrio para el domicilio.");
+      if (!/^[0-9]{10}$/.test(tel)) errores.push("El teléfono debe tener exactamente 10 dígitos (solo números).");
+      datos = { barrio: barrio, telefono: tel };
+    } else {
+      var nombre = $("nombre").value.trim();
+      if (!nombre) errores.push("Falta el nombre de quien recoge.");
+      datos = { nombre: nombre };
+    }
+
+    if (errores.length) {
+      mostrar($("msgGuardar"), errores.join(" "), "err");
+      return;
+    }
+
+    var pedido = {
+      numero: siguienteNumero(),
+      fecha: new Date().toISOString(),
+      tipo: tipo,
+      datos: datos,
+      lineas: carrito.map(function (l) {
+        return { producto: l.producto, pres: l.pres, cantidad: Number(l.cantidad), color: l.color,
+                 subtotal: precioLinea(l) };
+      }),
+      total: totalCarrito()
+    };
+
+    pedidos.push(pedido);
+    if (!guardarTodo()) {
+      pedidos.pop();
+      mostrar($("msgGuardar"), "No se pudo guardar en este navegador (almacenamiento bloqueado o lleno). El pedido NO se guardó.", "err");
+      return;
+    }
+
+    mostrar($("msgGuardar"), "Pedido #" + pedido.numero + " guardado. Total: " + money(pedido.total) + ".", "ok");
+    carrito = [];
+    $("barrio").value = ""; $("telefono").value = ""; $("nombre").value = "";
+    pintarCarrito();
+    pintarLista();
+  }
+
+  // ---------- Lista de pedidos ----------
+  function pintarLista() {
+    var cont = $("lista");
+    cont.innerHTML = "";
+    $("contador").textContent = pedidos.length ? "(" + pedidos.length + ")" : "";
+    if (!pedidos.length) {
+      var e = document.createElement("div"); e.className = "empty"; e.textContent = "Todavía no hay pedidos guardados.";
+      cont.appendChild(e); return;
+    }
+    pedidos.slice().reverse().forEach(function (p) {
+      var d = new Date(p.fecha);
+      var hora = d.toLocaleString("es-CO", { day: "2-digit", month: "2-digit", year: "numeric",
+                                             hour: "2-digit", minute: "2-digit", hour12: true });
+      var box = document.createElement("div"); box.className = "order";
+      var top = document.createElement("div"); top.className = "top";
+      var izq = document.createElement("span"); izq.textContent = "Pedido #" + p.numero + " · " + hora;
+      var der = document.createElement("span"); der.textContent = money(p.total);
+      top.appendChild(izq); top.appendChild(der);
+      var det = document.createElement("div"); det.className = "det";
+      var entrega = p.tipo === "domicilio"
+        ? "Domicilio · Barrio: " + p.datos.barrio + " · Tel: " + p.datos.telefono
+        : "Para recoger · " + p.datos.nombre;
+      det.textContent = entrega;
+      var items = document.createElement("div"); items.className = "det";
+      items.textContent = p.lineas.map(descLinea).join("; ");
+      box.appendChild(top); box.appendChild(det); box.appendChild(items);
+      cont.appendChild(box);
+    });
+  }
+
+  // ---------- Eventos ----------
+  $("producto").addEventListener("change", actualizarPresentaciones);
+  $("btnAgregar").addEventListener("click", agregarLinea);
+  $("btnGuardar").addEventListener("click", guardarPedido);
+  Array.prototype.forEach.call(document.querySelectorAll('input[name="tipo"]'), function (r) {
+    r.addEventListener("change", function () { actualizarTipo(); ocultar($("msgGuardar")); });
+  });
+
+  llenarProductos();
+  actualizarTipo();
+  pintarCarrito();
+  pintarLista();
+})();
+</script>
+</body>
+</html>

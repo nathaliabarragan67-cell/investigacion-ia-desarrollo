@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pedidos del restaurante</title>
+<style>
+  :root{
+    --bg:#faf6f0; --card:#fff; --ink:#2b2118; --muted:#7a6a5a; --line:#e8dfd3;
+    --accent:#c8441b; --accent-d:#a53513; --ok:#2f7d4f; --warn:#b9770e;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:var(--accent);color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:6px}
+  header h1{margin:0;font-size:1.25rem}
+  header span{font-size:.9rem;opacity:.9}
+  main{max-width:1100px;margin:0 auto;padding:16px;display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+  @media(max-width:800px){main{grid-template-columns:1fr}}
+  section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+  h2{margin:0 0 10px;font-size:1.05rem}
+  .prod{padding:10px 0;border-bottom:1px solid var(--line)}
+  .prod:last-child{border-bottom:0}
+  .prod h3{margin:0 0 6px;font-size:1rem}
+  .sizes{display:flex;flex-wrap:wrap;gap:8px}
+  .sizes button{flex:1 1 110px;border:1.5px solid var(--accent);background:#fff;color:var(--accent-d);border-radius:10px;padding:10px 8px;cursor:pointer;font-size:.9rem;line-height:1.3}
+  .sizes button b{display:block;font-size:1rem}
+  .sizes button:hover,.sizes button:active{background:var(--accent);color:#fff}
+  .line{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .line .name{flex:1}
+  .line .name small{display:block;color:var(--muted)}
+  .qty{display:flex;align-items:center;gap:6px}
+  .qty button{width:30px;height:30px;border-radius:50%;border:1px solid var(--line);background:#fff;font-size:1.1rem;cursor:pointer}
+  .line .sub{min-width:84px;text-align:right;font-weight:600}
+  .empty{color:var(--muted);font-style:italic;padding:8px 0}
+  label{display:block;font-size:.85rem;color:var(--muted);margin:10px 0 3px}
+  input[type=text],input[type=tel],input[type=number],textarea{width:100%;padding:9px;border:1px solid var(--line);border-radius:8px;font:inherit;background:#fff}
+  .tipo{display:flex;gap:8px}
+  .tipo label{flex:1;margin:0;border:1.5px solid var(--line);border-radius:10px;padding:10px;text-align:center;cursor:pointer;color:var(--ink);font-size:.95rem}
+  .tipo input{display:none}
+  .tipo input:checked + span{font-weight:700;color:var(--accent-d)}
+  .tipo label:has(input:checked){border-color:var(--accent);background:#fdeee8}
+  .totals{margin-top:12px;border-top:2px solid var(--ink);padding-top:8px}
+  .totals div{display:flex;justify-content:space-between;padding:2px 0}
+  .totals .grand{font-size:1.4rem;font-weight:800;color:var(--accent-d)}
+  .actions{display:flex;gap:8px;margin-top:12px}
+  .btn{flex:1;padding:12px;border:0;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer}
+  .btn.main{background:var(--accent);color:#fff}
+  .btn.main:hover{background:var(--accent-d)}
+  .btn.sec{background:#eee6da;color:var(--ink);flex:0 0 auto;padding:12px 16px}
+  .full{grid-column:1/-1}
+  .order{border:1px solid var(--line);border-radius:10px;padding:10px;margin-bottom:10px}
+  .order.done{opacity:.6}
+  .order .top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+  .badge{display:inline-block;padding:2px 8px;border-radius:99px;font-size:.78rem;font-weight:700;color:#fff}
+  .badge.dom{background:var(--warn)} .badge.rec{background:#3b6ea5}
+  .order ul{margin:6px 0;padding-left:18px}
+  .order .meta{color:var(--muted);font-size:.88rem}
+  .order .row{display:flex;gap:8px;align-items:center;justify-content:space-between;margin-top:6px;flex-wrap:wrap}
+  .small{padding:6px 12px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;font-size:.85rem}
+  .small.ok{background:var(--ok);color:#fff;border-color:var(--ok)}
+  .small.del{color:#b3261e}
+  .summary{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:10px;font-size:.95rem}
+  .summary b{font-size:1.1rem}
+  #toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:99px;opacity:0;transition:opacity .25s;pointer-events:none}
+  #toast.show{opacity:1}
+</style>
+</head>
+<body>
+<header>
+  <h1>🍚 Pedidos del restaurante</h1>
+  <span id="fecha"></span>
+</header>
+
+<main>
+  <section>
+    <h2>Menú — toca para agregar</h2>
+    <div id="menu"></div>
+  </section>
+
+  <section>
+    <h2>Pedido actual</h2>
+    <div id="lineas"></div>
+
+    <label for="cliente">Nombre del cliente</label>
+    <input type="text" id="cliente" placeholder="Ej: María">
+
+    <label for="telefono">Teléfono (opcional)</label>
+    <input type="tel" id="telefono" placeholder="Ej: 300 123 4567">
+
+    <label>Tipo de pedido</label>
+    <div class="tipo">
+      <label><input type="radio" name="tipo" value="recoger" checked><span>🏪 Para recoger</span></label>
+      <label><input type="radio" name="tipo" value="domicilio"><span>🛵 Domicilio</span></label>
+    </div>
+
+    <div id="domBox" style="display:none">
+      <label for="direccion">Dirección</label>
+      <input type="text" id="direccion" placeholder="Calle, barrio, referencia">
+      <label for="costoDom">Valor del domicilio ($)</label>
+      <input type="number" id="costoDom" min="0" step="500" value="0">
+    </div>
+
+    <label for="notas">Notas (sin cebolla, bien tostado, etc.)</label>
+    <textarea id="notas" rows="2"></textarea>
+
+    <div class="totals">
+      <div><span>Productos</span><span id="tProd">$0</span></div>
+      <div id="rowDom" style="display:none"><span>Domicilio</span><span id="tDom">$0</span></div>
+      <div class="grand"><span>TOTAL</span><span id="tTotal">$0</span></div>
+    </div>
+
+    <div class="actions">
+      <button class="btn sec" id="limpiar">Limpiar</button>
+      <button class="btn main" id="guardar">Guardar pedido</button>
+    </div>
+  </section>
+
+  <section class="full">
+    <h2>Pedidos de hoy</h2>
+    <div class="summary">
+      <div>Pedidos: <b id="sCount">0</b></div>
+      <div>Pendientes: <b id="sPend">0</b></div>
+      <div>Total del día: <b id="sTotal">$0</b></div>
+    </div>
+    <div id="lista"></div>
+  </section>
+</main>
+<div id="toast"></div>
+
+<script>
+const MENU = [
+  { id:"chino", nombre:"Arroz chino", tamanos:[["Caja",50000],["Media",42000],["Personal",32000]] },
+  { id:"paisa", nombre:"Arroz paisa", tamanos:[["Caja",50000],["Media",42000],["Personal",32000]] },
+  { id:"pollo", nombre:"Pollo frito", tamanos:[["Completo",38000],["Medio",22000],["Cuarto",12000]] },
+  { id:"bebida", nombre:"Bebida", tamanos:[["Personal",4000]] },
+];
+const KEY = "pedidos_restaurante_v1";
+const $ = id => document.getElementById(id);
+const money = n => "$" + Math.round(n).toLocaleString("es-CO");
+const hoy = () => { const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+
+let actual = {};            // clave "prodId|tamano" -> {nombre,tam,precio,cant}
+let pedidos = [];
+try { pedidos = JSON.parse(localStorage.getItem(KEY)) || []; } catch(e){ pedidos = []; }
+const guardarLS = () => { try{ localStorage.setItem(KEY, JSON.stringify(pedidos)); }catch(e){} };
+
+$("fecha").textContent = new Date().toLocaleDateString("es-CO",{weekday:"long",day:"numeric",month:"long"});
+
+// Menú
+$("menu").innerHTML = MENU.map(p => `
+  <div class="prod"><h3>${p.nombre}</h3><div class="sizes">
+  ${p.tamanos.map(([t,pr]) => `<button data-k="${p.id}|${t}"><b>${t}</b>${money(pr)}</button>`).join("")}
+  </div></div>`).join("");
+
+$("menu").addEventListener("click", e => {
+  const b = e.target.closest("button[data-k]"); if(!b) return;
+  const [pid,tam] = b.dataset.k.split("|");
+  const p = MENU.find(x=>x.id===pid); const precio = p.tamanos.find(t=>t[0]===tam)[1];
+  const k = b.dataset.k;
+  if(actual[k]) actual[k].cant++; else actual[k] = {nombre:p.nombre,tam,precio,cant:1};
+  render();
+});
+
+function totales(){
+  const prod = Object.values(actual).reduce((s,l)=>s+l.precio*l.cant,0);
+  const dom = esDomicilio() ? (parseInt($("costoDom").value)||0) : 0;
+  return {prod,dom,total:prod+dom};
+}
+const esDomicilio = () => document.querySelector('input[name=tipo]:checked').value === "domicilio";
+
+function render(){
+  const ls = Object.entries(actual);
+  $("lineas").innerHTML = ls.length ? ls.map(([k,l]) => `
+    <div class="line">
+      <div class="name">${l.nombre}<small>${l.tam} · ${money(l.precio)}</small></div>
+      <div class="qty"><button data-a="-" data-k="${k}">−</button><b>${l.cant}</b><button data-a="+" data-k="${k}">+</button></div>
+      <div class="sub">${money(l.precio*l.cant)}</div>
+    </div>`).join("") : '<div class="empty">Aún no has agregado nada.</div>';
+  const t = totales();
+  $("tProd").textContent = money(t.prod);
+  $("tDom").textContent = money(t.dom);
+  $("tTotal").textContent = money(t.total);
+  $("rowDom").style.display = esDomicilio() ? "flex" : "none";
+  $("domBox").style.display = esDomicilio() ? "block" : "none";
+}
+
+$("lineas").addEventListener("click", e => {
+  const b = e.target.closest("button[data-a]"); if(!b) return;
+  const l = actual[b.dataset.k];
+  l.cant += b.dataset.a === "+" ? 1 : -1;
+  if(l.cant <= 0) delete actual[b.dataset.k];
+  render();
+});
+document.querySelectorAll('input[name=tipo]').forEach(r => r.addEventListener("change", render));
+$("costoDom").addEventListener("input", render);
+
+function toast(msg){ const t=$("toast"); t.textContent=msg; t.classList.add("show"); setTimeout(()=>t.classList.remove("show"),1800); }
+
+function limpiar(){
+  actual = {};
+  ["cliente","telefono","direccion","notas"].forEach(i=>$(i).value="");
+  $("costoDom").value = 0;
+  document.querySelector('input[name=tipo][value=recoger]').checked = true;
+  render();
+}
+$("limpiar").addEventListener("click", () => { if(!Object.keys(actual).length || confirm("¿Borrar el pedido actual?")) limpiar(); });
+
+$("guardar").addEventListener("click", () => {
+  if(!Object.keys(actual).length){ toast("Agrega al menos un producto"); return; }
+  const dom = esDomicilio();
+  if(dom && !$("direccion").value.trim()){ toast("Falta la dirección del domicilio"); $("direccion").focus(); return; }
+  const t = totales();
+  const num = pedidos.filter(p=>p.fecha===hoy()).length + 1;
+  pedidos.push({
+    id: Date.now(), num, fecha: hoy(),
+    hora: new Date().toLocaleTimeString("es-CO",{hour:"2-digit",minute:"2-digit"}),
+    cliente: $("cliente").value.trim() || "Sin nombre",
+    telefono: $("telefono").value.trim(),
+    tipo: dom ? "domicilio" : "recoger",
+    direccion: dom ? $("direccion").value.trim() : "",
+    notas: $("notas").value.trim(),
+    items: Object.values(actual),
+    costoDom: t.dom, total: t.total, entregado:false
+  });
+  guardarLS(); limpiar(); renderLista(); toast("Pedido #" + num + " guardado");
+});
+
+function esc(s){ return String(s).replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c])); }
+
+function renderLista(){
+  const lista = pedidos.filter(p=>p.fecha===hoy()).sort((a,b)=>b.id-a.id);
+  $("sCount").textContent = lista.length;
+  $("sPend").textContent = lista.filter(p=>!p.entregado).length;
+  $("sTotal").textContent = money(lista.reduce((s,p)=>s+p.total,0));
+  $("lista").innerHTML = lista.length ? lista.map(p => `
+    <div class="order ${p.entregado?"done":""}">
+      <div class="top">
+        <div><b>#${p.num} · ${esc(p.cliente)}</b> <span class="badge ${p.tipo==="domicilio"?"dom":"rec"}">${p.tipo==="domicilio"?"Domicilio":"Recoger"}</span></div>
+        <div class="meta">${p.hora}${p.telefono?" · "+esc(p.telefono):""}</div>
+      </div>
+      <ul>${p.items.map(i=>`<li>${i.cant} × ${i.nombre} ${i.tam.toLowerCase()}</li>`).join("")}</ul>
+      ${p.direccion?`<div class="meta">📍 ${esc(p.direccion)}${p.costoDom?" (domicilio "+money(p.costoDom)+")":""}</div>`:""}
+      ${p.notas?`<div class="meta">📝 ${esc(p.notas)}</div>`:""}
+      <div class="row">
+        <b>${money(p.total)}</b>
+        <div>
+          <button class="small ${p.entregado?"":"ok"}" data-a="toggle" data-id="${p.id}">${p.entregado?"↩ Reabrir":"✔ Entregado"}</button>
+          <button class="small del" data-a="del" data-id="${p.id}">Eliminar</button>
+        </div>
+      </div>
+    </div>`).join("") : '<div class="empty">Todavía no hay pedidos hoy.</div>';
+}
+$("lista").addEventListener("click", e => {
+  const b = e.target.closest("button[data-a]"); if(!b) return;
+  const id = Number(b.dataset.id);
+  if(b.dataset.a==="toggle"){ const p=pedidos.find(x=>x.id===id); p.entregado=!p.entregado; }
+  else if(b.dataset.a==="del"){ if(!confirm("¿Eliminar este pedido?")) return; pedidos = pedidos.filter(x=>x.id!==id); }
+  guardarLS(); renderLista();
+});
+
+render(); renderLista();
+</script>
+</body>
+</html>

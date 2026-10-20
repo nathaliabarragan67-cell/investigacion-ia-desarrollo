@@ -124,13 +124,13 @@ Marca ✔ cumple, ✘ falla o ~ parcial. Se llena después de ejecutar.
 
 | # | Criterio | A: libre | B: libre con reglas | C: especificación | Observaciones |
 |---|---|---|---|---|---|
-| 1 | Total correcto | | | | |
-| 2 | Regla del color | | | | |
-| 3 | Datos de entrega | | | | |
-| 4 | Entradas imposibles | | | | |
-| 5 | Registro persistente | | | | |
-| 6 | Sin duplicados | | | | |
-| | **Total** | /6 | /6 | /6 | |
+| 1 | Total correcto | ✔ | | | Total $104.000. No hay campo de color; aplica la regla definida antes de ejecutar |
+| 2 | Regla del color | ✘ | | | No existe el campo de color |
+| 3 | Datos de entrega | ✘ | | | Guardó los teléfonos "12345" y con letras y el pedido sin nombre; rechazó el domicilio sin dirección |
+| 4 | Entradas imposibles | ✔ | | | El menú no ofrece esas combinaciones; la línea desaparece al llegar a 0 |
+| 5 | Registro persistente | ✘ | | | Los pedidos no siguen al cerrar y reabrir el archivo |
+| 6 | Sin duplicados | ✔ | | | Un solo pedido; el segundo clic encuentra el formulario vacío |
+| | **Total** | 3/6 | | | |
 
 | Dato de proceso | A | B | C |
 |---|---|---|---|

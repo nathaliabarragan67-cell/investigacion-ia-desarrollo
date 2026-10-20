@@ -42,3 +42,5 @@ Desde el 17 de septiembre empecé a explorar el tema antes de crear este portafo
 
 - Completé las pruebas de la versión A (3 de 6 criterios) y documenté los resultados en `05-experimentos/comparacion-especificacion/v1-libre`.
 - Próximo paso: ejecutar la versión B.
+- - Ejecuté la versión B (libre con reglas) y documenté sus resultados en `05-experimentos/comparacion-especificacion/v2-libre-con-reglas`.
+- Próximo paso: ejecutar la versión C (especificación).

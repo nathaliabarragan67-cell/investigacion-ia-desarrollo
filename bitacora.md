@@ -33,3 +33,12 @@ Desde el 17 de septiembre empecé a explorar el tema antes de crear este portafo
 - Documenté como experimento, en 05-experimentos, el contestador automático con IA que construí con n8n, conectándolo con las cuatro fichas.
 - Informé al dueño del negocio antes de publicar la documentación, y la dejé anonimizada.
 - Leí *Building effective agents* (Anthropic) y redacté la ficha 05; completé el README de 01-fundamentos con las definiciones de flujo de trabajo y agente.
+
+## Lunes 5 de octubre de 2026
+
+- Ejecuté la versión A (descripción libre) del experimento comparativo.
+
+## Martes 6 de octubre de 2026
+
+- Completé las pruebas de la versión A (3 de 6 criterios) y documenté los resultados en `05-experimentos/comparacion-especificacion/v1-libre`.
+- Próximo paso: ejecutar la versión B.

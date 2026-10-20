@@ -128,7 +128,7 @@ Marca ✔ cumple, ✘ falla o ~ parcial. Se llena después de ejecutar.
 | 2 | Regla del color | ✘ | ✔ | | Rechaza arroz chino sin color; el selector solo ofrece Amarillo y Café |
 | 3 | Datos de entrega | ✘ | ✔ | | Rechaza teléfono inválido, domicilio sin barrio y recoger sin nombre |
 | 4 | Entradas imposibles | ✔ | ✔ | | Sin "Caja" para el pollo; rechaza cantidad 0 o negativa |
-| 5 | Registro persistente | [ver sección 4] | ✔ | | Siguen en el mismo navegador; no aparecen en incógnito |
+| 5 | Registro persistente |  | ✔ | | Siguen en el mismo navegador; no aparecen en incógnito |
 | 6 | Sin duplicados | ✔ | ✔ | | El botón se bloquea mientras guarda |
 | | **Total** | [según la repetición] | 6/6 | | |
 
